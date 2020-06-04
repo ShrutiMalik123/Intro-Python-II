@@ -1,5 +1,6 @@
 from room import Room
 from player import Player
+from item import Item
 # Declare all the rooms
 
 room = {
@@ -49,15 +50,22 @@ room['treasure'].s_to = room['narrow']
 # Print an error message if the movement isn't allowed.
 #
 # If the user enters "q", quit the game.
+
+items = {'coin': Item('Coin', 'Gold coin worth 1.'),
+         'lantern': Item('Lantern', 'A lantern that can light up the room.')}
+room['outside'].add_items(items['coin'])
+room['foyer'].add_items(items['coin'])
+room['overlook'].add_items(items['lantern'])
+
 name = input('What is your name, Adventurer? ')
 player = Player(name, room['outside'])
 
-print(f'Welcome {name}. Begin your adventure from {player.current_room}')
-
+print(f'Welcome {name}. Begin your adventure from {player.current_room} \n')
+print(room['outside'].show_items())
 
 while True:
     action = input(
-        f'Choose an action. (n for North, s for South, e for East, w for West, take to Pickup item, d to Drop, q to Quit)')
+        f'Choose an action. (n for North, s for South, e for East, w for West, take to Pickup item, d to Drop, q to Quit) \n')
 
     if action == 'n' or action == 'N':
         next_move = player.current_room.n_to
@@ -66,6 +74,7 @@ while True:
         else:
             player = Player(name, next_move)
             print(player)
+            print(player.current_room.show_items())
 
     elif action == 's' or action == 'S':
         next_move = player.current_room.s_to
@@ -74,6 +83,7 @@ while True:
         else:
             player = Player(name, next_move)
             print(player)
+            print(player.current_room.show_items())
 
     elif action == 'e' or action == 'E':
         next_move = player.current_room.e_to
@@ -82,6 +92,7 @@ while True:
         else:
             player = Player(name, next_move)
             print(player)
+            print(player.current_room.show_items())
 
     elif action == 'w' or action == 'W':
         next_move = player.current_room.w_to
@@ -90,6 +101,21 @@ while True:
         else:
             player = Player(name, next_move)
             print(player)
+            print(player.current_room.show_items())
+
+    elif action == 'take' or action == 'get':
+        for item in player.current_room.items:
+            print(player.pickup_item(item))
+
+        print(player.inventory)
+
+    elif action == 'drop' or action == 'discard':
+        for i in player.inventory:
+            if i.name == item:
+                player.drop_item()
+
+    elif action == 'i':
+        print(player.show_inventory())
 
     elif action == 'q' or action == 'Q':
         print('Goodbye Adventurer!')
